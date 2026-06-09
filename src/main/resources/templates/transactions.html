@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="	https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <title>一覧画面</title>
+</head>
+
+<body>
+  <h1>収支一覧</h1>
+
+  <form th:action="@{/transactions}" method="get" class="row g-3 mb-4">
+
+    <div class="col-md-4">
+      <label class="form-label">開始日</label>
+      <input type="date" name="startDate" th:value="${startDate}" class="form-control">
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">終了日</label>
+      <input type="date" name="endDate" th:value="${endDate}" class="form-control">
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">種類</label>
+
+      <select name="type" class="form-control">
+
+        <option value="">すべて</option>
+
+        <option value="INCOME" th:selected="${incomeexpensecd == 1}">
+          収入
+        </option>
+
+        <option value="EXPENSE" th:selected="${incomeexpensecd == 2}">
+          支出
+        </option>
+
+      </select>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary me-2">検索</button>
+      <a href="/transactions" class="btn btn-secondary">クリア</a>
+    </div>
+
+  </form>
+
+  <table class="table table-striped">
+    <tr>
+      <th>日付</th>
+      <th>種類</th>
+      <th>名前</th>
+      <th>金額</th>
+      <th>メモ</th>
+      <th>編集</th>
+    </tr>
+
+    <tr th:each="transaction : ${transactions}">
+      <td th:text="${transaction.transactionDate}"></td>
+      <td>
+
+        <span th:text="${transaction.incomeexpensecd == 1 ? '収入' : '支出'}"
+          th:class="${transaction.incomeexpensecd == 1} ? 'income-text' : 'expense-text'">
+        </span>
+
+      </td>
+      <td th:text="${transaction.name}"></td>
+      <td th:text="${transaction.amount}"></td>
+      <td th:text="${transaction.memo}"></td>
+      <td class="edit">
+        <a class="editCorrection" th:href="@{/transactions/{id}/edit(id=${transaction.id})}">
+          修正
+        </a>
+
+        <form th:action="@{/transactions/{id}/delete(id=${transaction.id})}" method="post" style="display:inline;">
+
+          <button type="submit" class="btn btn-primary">削除</button>
+
+        </form>
+      </td>
+    </tr>
+  </table>
+  <a href="/transactions/new">新規登録</a>
+  <div class="mt-4 p-3 border rounded bg-light">
+
+    <h4>集計</h4>
+
+    <p>
+      収入合計：
+      <span th:text="${incomeTotal}"></span>
+      円
+    </p>
+
+    <p>
+      支出合計：
+      <span th:text="${expenseTotal}"></span>
+      円
+    </p>
+
+    <hr>
+
+    <h5>
+      残高：
+      <span th:text="${balance}"></span>
+      円
+    </h5>
+  </div>
+  <p><a href="/">トップへ戻る</a></p>
+</body>
+
+</html>
