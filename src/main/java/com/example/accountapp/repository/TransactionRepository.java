@@ -3,17 +3,20 @@ package com.example.accountapp.repository;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.example.accountapp.entity.Transaction;
+import com.example.accountapp.entity.AccountEntry;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
+public interface TransactionRepository extends JpaRepository<AccountEntry, Integer> {
 
-        List<Transaction> findByIncomeexpensecd(Integer incomeexpensecd);
+        /** 収入・支出区分で検索する */
+        List<AccountEntry> findByIncomeExpenseCd(Integer incomeExpenseCd);
 
-        List<Transaction> findByTransactionDateBetweenAndIncomeexpensecd(
+        /** 収入・支出区分と期間で検索する */
+        List<AccountEntry> findByTransactionDateBetweenAndIncomeExpenseCd(
                         LocalDate startDate,
                         LocalDate endDate,
-                        Integer incomeexpensecd);
+                        Integer incomeExpenseCd);
 
-        List<Transaction> findByTransactionDateBetween(LocalDate startDate, LocalDate endDate);
+        /** 期間で検索する */
+        List<AccountEntry> findByTransactionDateBetween(LocalDate startDate, LocalDate endDate);
 }

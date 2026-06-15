@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="	https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
   <link rel="stylesheet" th:href="@{/css/style.css}">
   <title>編集</title>
 </head>
@@ -15,17 +15,22 @@
       <form th:action="@{/transactions/{id}/edit(id=${transaction.id})}" th:object="${transaction}" method="post">
         <div class="mb-3">
           <label class="form-label">日付</label>
-          <input type="date" name="transactionDate" th:value="${#temporals.format(transaction.transactionDate, 'yyyy-MM-dd')}"
-            class="form-control">
+          <input type="date" th:field="*{transactionDate}" class="form-control">
         </div>
 
         <div class="mb-3">
           <label class="form-label">種類</label>
-          <select th:field="*{incomeexpensecd}" class="form-control">
+
+          <select th:field="*{incomeExpenseCd}" class="form-control">
             <option value="">選択してください</option>
-            <option value="INCOME">収入</option>
-            <option value="EXPENSE">支出</option>
+
+            <option th:each="incomeExpenseType : ${incomeExpenseTypes}" th:value="${incomeExpenseType.incomeExpenseCd}"
+              th:text="${incomeExpenseType.name}">
+            </option>
           </select>
+
+          <p class="error-message" th:if="${#fields.hasErrors('incomeExpenseCd')}" th:errors="*{incomeExpenseCd}">
+          </p>
         </div>
         <div class="mb-3">
           <label class="form-label">名前</label>
@@ -35,6 +40,35 @@
         <div class="mb-3">
           <label class="form-label">金額</label>
           <input type="number" th:field="*{amount}" class="form-control">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">カテゴリ</label>
+
+          <select th:field="*{categoryCd}" class="form-control">
+            <option value="">選択してください</option>
+
+            <option th:each="category : ${categories}" th:value="${category.categoryCd}" th:text="${category.categoryName}">
+            </option>
+          </select>
+
+          <p class="error-message" th:if="${#fields.hasErrors('categoryCd')}" th:errors="*{categoryCd}">
+          </p>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">支払方法</label>
+
+          <select th:field="*{paymentmethodcd}" class="form-control">
+            <option value="">選択してください</option>
+
+            <option th:each="paymentMethod : ${paymentMethods}" th:value="${paymentMethod.paymentMethodCd}"
+              th:text="${paymentMethod.name}">
+            </option>
+          </select>
+
+          <p class="error-message" th:if="${#fields.hasErrors('paymentmethodcd')}" th:errors="*{paymentmethodcd}">
+          </p>
         </div>
 
         <div class="mb-3">
