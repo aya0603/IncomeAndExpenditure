@@ -22,7 +22,9 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestParam;
 
-/** Controller: 画面からのリクエストを受け取る */
+/**
+ * 取引に関する画面表示や処理を担当するController
+ */
 @Controller
 public class TransactionController {
 
@@ -47,38 +49,24 @@ public class TransactionController {
   /**
    * 取引一覧画面を表示する
    * GET /transactions にアクセスされたときに実行
+   *
+   * @param startDate 開始日。入力されていなければnullになる
+   * @param endDate 終了日。入力されていなければnullになる
+   * @param type 収入・支出区分。入力されていなければnullになる
+   * @param model ControllerからThymeleafのHTMLへデータを渡すための箱
+   * @return 取引一覧画面のテンプレート名
    */
   @GetMapping("/transactions")
   public String list(
-
-      /**
-       * 開始日。入力されていなければnullになる
-       *
-       * @DateTimeFormatにより、HTMLのdate入力値をLocalDateに変換する
-       */
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-
-      /**
-       * 終了日。入力されていなければnullになる
-       *
-       * @DateTimeFormatにより、HTMLのdate入力値をLocalDateに変換する
-       */
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-
-      /**
-       * 収入・支出区分
-       * 例: 1 = 収入, 2 = 支出
-       * 入力されていなければnullになる
-       */
       @RequestParam(required = false) Integer type,
-
-      /** ControllerからThymeleafのHTMLへデータを渡すための箱 */
       Model model) {
 
-    /** 検索条件に応じた取引一覧をServiceから取得 */
+    /* 検索条件に応じた取引一覧をServiceから取得 */
     List<AccountEntry> transactions = transactionService.search(startDate, endDate, type);
 
-    /** 取得した取引一覧から収入合計を計算する */
+    // 取得した取引一覧から収入合計を計算する
     int incomeTotal = transactionService.calculateIncomeTotal(transactions);
     /** 取得した取引一覧から支出合計を計算する */
     int expenseTotal = transactionService.calculateExpenseTotal(transactions);
