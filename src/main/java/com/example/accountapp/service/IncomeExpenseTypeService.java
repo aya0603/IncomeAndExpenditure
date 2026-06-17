@@ -9,7 +9,8 @@ import com.example.accountapp.entity.IncomeExpenseType;
 import com.example.accountapp.repository.IncomeExpenseTypeRepository;
 
 /**
- * TransactionControllerとIncomeExpenseTypeRepositoryを仲介するService
+ * TransactionControllerとIncomeExpenseTypeServiceのデータを処理するService
+ * 検索や計算処理のロジックを行う
  */
 @Service
 @Transactional(readOnly = true)
