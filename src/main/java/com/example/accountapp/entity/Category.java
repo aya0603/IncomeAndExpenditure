@@ -7,19 +7,20 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 /**
- * すること: エンティティ
+ * DBのcategoriesテーブルとクラス（オブジェクト）を1対1で対応づけるEntity
+ * バリデーションチェックも行う
  */
 @Data
 @Entity
 @Table(name = "categories")
 public class Category {
 
-  /** ID */
+  // ID
   @Id
   @Column(name = "categorycd")
   private Integer categoryCd;
 
-  /** 名前 */
+  // 名前
   @Column(name = "name")
   private String categoryName;
 }

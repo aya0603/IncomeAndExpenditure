@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.accountapp.entity.PaymentMethod;
 import com.example.accountapp.repository.PaymentMethodRepository;
 
+/**
+ * TransactionControllerとpaymentMethodRepositoryを仲介するService
+ */
 @Service
 @Transactional(readOnly = true)
 public class PaymentMethodService {
@@ -18,7 +21,7 @@ public class PaymentMethodService {
     this.paymentMethodRepository = paymentMethodRepository;
   }
 
-  /** 支払方法一覧を取得する */
+  // 支払方法一覧を取得する
   public List<PaymentMethod> findAll() {
     return paymentMethodRepository.findAll();
   }
