@@ -23,17 +23,19 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestParam;
 
-/** Controller: 画面からのリクエストを受け取る */
+/**
+ * 取引に関する画面表示や処理を担当するController
+ */
 @Controller
 public class TransactionController {
 
-  /** ControllerはServiceを通して処理を行う */
+  // ControllerはServiceを通して処理を行う
   private final TransactionService transactionService;
   private final CategoryService categoryService;
   private final IncomeExpenseTypeService incomeExpenseTypeService;
   private final PaymentMethodService paymentMethodService;
 
-  /** SpringがServiceを自動で渡す */
+  // SpringがServiceを自動で渡す
   public TransactionController(
       TransactionService transactionService,
       CategoryService categoryService,
@@ -48,32 +50,18 @@ public class TransactionController {
   /**
    * 取引一覧画面を表示する
    * GET /transactions にアクセスされたときに実行
+   *
+   * @param startDate 開始日。入力されていなければnullになる
+   * @param endDate   終了日。入力されていなければnullになる
+   * @param type      収入・支出区分。入力されていなければnullになる
+   * @param model     ControllerからThymeleafのHTMLへデータを渡すための箱
+   * @return 取引一覧画面のテンプレート名
    */
   @GetMapping("/transactions")
   public String list(
-
-      /**
-       * 開始日。入力されていなければnullになる
-       *
-       * @DateTimeFormatにより、HTMLのdate入力値をLocalDateに変換する
-       */
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-
-      /**
-       * 終了日。入力されていなければnullになる
-       *
-       * @DateTimeFormatにより、HTMLのdate入力値をLocalDateに変換する
-       */
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-
-      /**
-       * 収入・支出区分
-       * 例: 1 = 収入, 2 = 支出
-       * 入力されていなければnullになる
-       */
       @RequestParam(required = false) Integer type,
-
-      /** ControllerからThymeleafのHTMLへデータを渡すための箱 */
       Model model) {
 
     /** 検索条件に応じた取引一覧をServiceから取得 */
@@ -94,6 +82,10 @@ public class TransactionController {
   /**
    * 新規登録画面を表示する
    * GET /transactions/new にアクセスされたときに実行
+   *
+   * @param model       ControllerからThymeleafのHTMLへデータを渡すための箱
+   * @param transaction DBとクラス（オブジェクト）を1対1で対応づけるための箱
+   * @return 取引登録画面のテンプレート名
    */
   @GetMapping("/transactions/new")
   public String newForm(Model model) {
@@ -101,6 +93,7 @@ public class TransactionController {
 
     transaction.setTransactionDate(LocalDate.now());
 
+    // 画面に表示する一覧を渡す
     model.addAttribute("transaction", transaction);
     model.addAttribute("categories", categoryService.findAll());
     model.addAttribute("incomeExpenseTypes", incomeExpenseTypeService.findAll());
@@ -112,6 +105,11 @@ public class TransactionController {
   /**
    * 新規登録処理
    * POST /transactions にフォーム送信されたときに実行
+   *
+   * @param model       ControllerからThymeleafのHTMLへデータを渡すための箱
+   * @param transaction DBとクラス（オブジェクト）を1対1で対応づけるための箱
+   * @return 取引登録画面のテンプレート名(transaction_form)
+   * @return 取引一覧画面のテンプレート名(redirect:/transactions)
    */
   @PostMapping("/transactions")
   public String create(
@@ -119,6 +117,7 @@ public class TransactionController {
       BindingResult bindingResult,
       Model model) {
 
+    // 入力エラーがある場合は、更新せずに編集画面へ戻す
     if (bindingResult.hasErrors()) {
       model.addAttribute("categories", categoryService.findAll());
       model.addAttribute("incomeExpenseTypes", incomeExpenseTypeService.findAll());
@@ -126,13 +125,20 @@ public class TransactionController {
       return "transaction_form";
     }
 
+    // 入力エラーがなければ、Serviceに更新処理を依頼する
     transactionService.create(transaction);
+
+    // 更新後は一覧画面へリダイレクトする
     return "redirect:/transactions";
   }
 
   /**
    * 編集画面を表示する
-   * 例: GET /transactions/1/edit にアクセスされたら、id = 1 が入る
+   * GET /transactions/{id}/edit にアクセスされたときに実行される
+   *
+   * @param model       ControllerからThymeleafのHTMLへデータを渡すための箱
+   * @param transaction DBとクラス（オブジェクト）を1対1で対応づけるための箱
+   * @return 取引編集画面のテンプレート名
    */
   @GetMapping("/transactions/{id}/edit")
   public String editForm(@PathVariable Integer id, Model model) {
@@ -149,49 +155,48 @@ public class TransactionController {
   /**
    * 更新処理
    * POST /transactions/{id}/edit にフォーム送信されたときに実行される
+   *
+   * @param model       ControllerからThymeleafのHTMLへデータを渡すための箱
+   * @param transaction DBとクラス（オブジェクト）を1対1で対応づけるための箱
+   * @return 取引編集画面のテンプレート名(transaction_edit)
+   * @return 取引一覧画面のテンプレート名(redirect:/transactions)
    */
   @PostMapping("/transactions/{id}/edit")
   public String update(
-      /** URL内のidを受け取る */
       @PathVariable Integer id,
-      /**
-       * フォーム入力値をTransactionに詰める
-       *
-       * @Validによりバリデーションを実行する
-       */
-      @Valid AccountEntry form,
-      /** バリデーション結果を受け取る */
+      @Valid AccountEntry transaction,
       BindingResult bindingResult,
-      /** エラー時に画面へデータを渡すために使う */
       Model model) {
 
-    /** 入力エラーがある場合は、更新せずに編集画面へ戻す */
+    // 入力エラーがある場合は、更新せずに編集画面へ戻す
     if (bindingResult.hasErrors()) {
-      form.setId(id);
-      model.addAttribute("transaction", form);
+      transaction.setId(id);
+      model.addAttribute("transaction", transaction);
       model.addAttribute("categories", categoryService.findAll());
       model.addAttribute("incomeExpenseTypes", incomeExpenseTypeService.findAll());
       model.addAttribute("paymentMethods", paymentMethodService.findAll());
       return "transaction_edit";
     }
 
-    /** 入力エラーがなければ、Serviceに更新処理を依頼する */
-    transactionService.update(id, form);
+    // 入力エラーがなければ、Serviceに更新処理を依頼する
+    transactionService.update(id, transaction);
 
-    /** 更新後は一覧画面へリダイレクトする */
+    // 更新後は一覧画面へリダイレクトする
     return "redirect:/transactions";
   }
 
   /**
    * 削除処理
    * POST /transactions/{id}/delete に送信されたときに実行される
+   *
+   * @return 取引一覧画面のテンプレート名
    */
   @PostMapping("/transactions/{id}/delete")
   public String delete(@PathVariable Integer id) {
-    /** URLから受け取ったidの取引を削除する */
+    // URLから受け取ったidの取引を削除する
     transactionService.delete(id);
 
-    /** 削除後は一覧画面へリダイレクトする */
+    // 削除後は一覧画面へリダイレクトする
     return "redirect:/transactions";
   }
 }

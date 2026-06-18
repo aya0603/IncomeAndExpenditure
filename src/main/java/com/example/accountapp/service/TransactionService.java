@@ -11,6 +11,10 @@ import com.example.accountapp.entity.AccountEntry;
 import com.example.accountapp.entity.AccountInfo;
 import com.example.accountapp.repository.TransactionRepository;
 
+/**
+ * TransactionControllerとtransactionRepositoryを仲介するService
+ * 検索や計算処理のロジックも行う
+ */
 @Service
 @Transactional(readOnly = true)
 public class TransactionService {
@@ -55,12 +59,12 @@ public class TransactionService {
     return info;
   }
 
-  /** IDで取引を1件取得する */
+  // IDで取引を1件取得する
   public AccountEntry findById(Integer id) {
     return transactionRepository.findById(id).orElseThrow();
   }
 
-  /** 収入合計を計算する */
+  // 収入合計を計算する
   public int calculateIncomeTotal(List<AccountEntry> transactions) {
     return transactions.stream()
         .filter(t -> INCOME.equals(t.getIncomeExpenseCd()))
@@ -68,7 +72,7 @@ public class TransactionService {
         .sum();
   }
 
-  /** 支出合計を計算する */
+  // 支出合計を計算する
   public int calculateExpenseTotal(List<AccountEntry> transactions) {
     return transactions.stream()
         .filter(t -> EXPENDITURE.equals(t.getIncomeExpenseCd()))
@@ -82,7 +86,7 @@ public class TransactionService {
     transactionRepository.save(transaction);
   }
 
-  /** 取引を更新する */
+  // 取引を更新する
   @Transactional
   public void update(Integer id, AccountEntry form) {
     AccountEntry transaction = transactionRepository.findById(id).orElseThrow();
@@ -100,7 +104,7 @@ public class TransactionService {
     transactionRepository.save(transaction);
   }
 
-  /** 取引を削除する */
+  // 取引を削除する
   @Transactional
   public void delete(Integer id) {
     transactionRepository.deleteById(id);

@@ -14,6 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.accountapp.entity.AccountEntry;
 import com.example.accountapp.repository.TransactionRepository;
 
+/**
+ * TransactionServiceの収支計算のロジックTest
+ */
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
 

@@ -7,19 +7,20 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 /**
- * すること: エンティティ
+ * DBのpaymentmethodテーブルとクラス（オブジェクト）を1対1で対応づけるEntity
+ * バリデーションチェックも行う
  */
 @Data
 @Entity
 @Table(name = "paymentmethod")
 public class PaymentMethod {
 
-  /** ID */
+  // ID
   @Id
   @Column(name = "paymentmethodcd")
   private Integer paymentMethodCd;
 
-  /** 名前 */
+  // 名前
   @Column(name = "name")
   private String name;
 }

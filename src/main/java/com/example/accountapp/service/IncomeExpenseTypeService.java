@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.accountapp.entity.IncomeExpenseType;
 import com.example.accountapp.repository.IncomeExpenseTypeRepository;
 
+/**
+ * TransactionControllerとIncomeExpenseTypeRepositoryを仲介するService
+ */
 @Service
 @Transactional(readOnly = true)
 public class IncomeExpenseTypeService {
@@ -18,7 +21,7 @@ public class IncomeExpenseTypeService {
     this.incomeExpenseTypeRepository = incomeExpenseTypeRepository;
   }
 
-  /** 収支一覧を取得する */
+  // 収支一覧を取得する
   public List<IncomeExpenseType> findAll() {
     return incomeExpenseTypeRepository.findAll();
   }
