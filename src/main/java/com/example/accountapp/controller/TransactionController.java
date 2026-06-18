@@ -1,6 +1,7 @@
 package com.example.accountapp.controller;
 
 import com.example.accountapp.entity.AccountEntry;
+import com.example.accountapp.entity.AccountInfo;
 import com.example.accountapp.service.TransactionService;
 import com.example.accountapp.service.CategoryService;
 import com.example.accountapp.service.IncomeExpenseTypeService;
@@ -76,23 +77,16 @@ public class TransactionController {
       Model model) {
 
     /** 検索条件に応じた取引一覧をServiceから取得 */
-    List<AccountEntry> transactions = transactionService.search(startDate, endDate, type);
-
-    /** 取得した取引一覧から収入合計を計算する */
-    int incomeTotal = transactionService.calculateIncomeTotal(transactions);
-    /** 取得した取引一覧から支出合計を計算する */
-    int expenseTotal = transactionService.calculateExpenseTotal(transactions);
-    /** 収入合計 - 支出合計で残高を計算する */
-    int balance = transactionService.calculateBalance(incomeTotal, expenseTotal);
+    AccountInfo accountInfo = transactionService.search(startDate, endDate, type);
 
     /** 画面に表示する一覧を渡す */
-    model.addAttribute("transactions", transactions);
+    model.addAttribute("transactions", accountInfo.getAccountEntryList());
     model.addAttribute("startDate", startDate);
     model.addAttribute("endDate", endDate);
     model.addAttribute("type", type);
-    model.addAttribute("incomeTotal", incomeTotal);
-    model.addAttribute("expenseTotal", expenseTotal);
-    model.addAttribute("balance", balance);
+    model.addAttribute("incomeTotal", accountInfo.getIncomeTotal());
+    model.addAttribute("expenseTotal", accountInfo.getExpenseTotal());
+    model.addAttribute("balance", accountInfo.getBalance());
 
     return "transactions";
   }

@@ -1,12 +1,14 @@
 package com.example.accountapp.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.accountapp.entity.AccountEntry;
+import com.example.accountapp.entity.AccountInfo;
 import com.example.accountapp.repository.TransactionRepository;
 
 @Service
@@ -22,25 +24,35 @@ public class TransactionService {
   }
 
   /** 検索条件に応じて取引一覧を取得する */
-  public List<AccountEntry> search(LocalDate startDate, LocalDate endDate, Integer type) {
+  public AccountInfo search(LocalDate startDate, LocalDate endDate, Integer type) {
     boolean hasDate = startDate != null && endDate != null;
     boolean hasType = type != null;
+    // 返却データ
+    AccountInfo info = new AccountInfo();
+    // 明細データ
+    List<AccountEntry> accountEntryList = new ArrayList<AccountEntry>();
 
     if (hasDate && hasType) {
-      return transactionRepository
+      accountEntryList = transactionRepository
           .findByTransactionDateBetweenAndIncomeExpenseCd(startDate, endDate, type);
-    }
-
-    if (hasDate) {
-      return transactionRepository
+    } else if (hasDate) {
+      accountEntryList = transactionRepository
           .findByTransactionDateBetween(startDate, endDate);
+    } else if (hasType) {
+      accountEntryList = transactionRepository.findByIncomeExpenseCd(type);
+    } else {
+      accountEntryList = transactionRepository.findAll();
     }
+    // 返却用クラスの明細部に取得した値をセットする
+    info.setAccountEntryList(accountEntryList);
 
-    if (hasType) {
-      return transactionRepository.findByIncomeExpenseCd(type);
-    }
+    // 集計
+    // 取得した取引一覧から収入合計を計算する
+    info.setIncomeTotal(calculateIncomeTotal(accountEntryList));
+    // 取得した取引一覧から支出合計を計算する
+    info.setExpenseTotal(calculateExpenseTotal(accountEntryList));
 
-    return transactionRepository.findAll();
+    return info;
   }
 
   /** IDで取引を1件取得する */
@@ -62,11 +74,6 @@ public class TransactionService {
         .filter(t -> EXPENDITURE.equals(t.getIncomeExpenseCd()))
         .mapToInt(t -> t.getAmount() == null ? 0 : t.getAmount())
         .sum();
-  }
-
-  /** 残高を計算する */
-  public int calculateBalance(int incomeTotal, int expenseTotal) {
-    return incomeTotal - expenseTotal;
   }
 
   /** 取引を新規登録する */
