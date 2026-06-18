@@ -9,7 +9,8 @@ import com.example.accountapp.entity.PaymentMethod;
 import com.example.accountapp.repository.PaymentMethodRepository;
 
 /**
- * TransactionControllerとpaymentMethodRepositoryを仲介するService
+ * TransactionControllerとPaymentMethodServiceのデータを処理するService
+ * 検索や計算処理のロジックを行う
  */
 @Service
 @Transactional(readOnly = true)

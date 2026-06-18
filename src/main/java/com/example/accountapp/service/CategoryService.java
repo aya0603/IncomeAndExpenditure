@@ -9,7 +9,8 @@ import com.example.accountapp.entity.Category;
 import com.example.accountapp.repository.CategoryRepository;
 
 /**
- * TransactionControllerとCategoryRepositoryを仲介するService
+ * TransactionControllerとCategoryServiceのデータを処理するService
+ * 検索や計算処理のロジックを行う
  */
 @Service
 @Transactional(readOnly = true)
