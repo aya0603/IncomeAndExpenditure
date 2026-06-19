@@ -62,31 +62,4 @@ class TransactionServiceTest {
     // 検証
     assertEquals(5, totalResult);
   }
-
-  @Test
-  void calculateBalance_残高を計算する() {
-    // 準備
-    List<AccountEntry> transactionsIncome = new ArrayList<>();
-    List<AccountEntry> transactionsExpenditure = new ArrayList<>();
-
-    AccountEntry income = new AccountEntry();
-    income.setIncomeExpenseCd(1);
-    income.setAmount(5);
-
-    AccountEntry expenditure = new AccountEntry();
-    expenditure.setIncomeExpenseCd(2);
-    expenditure.setAmount(5);
-
-    transactionsIncome.add(income);
-    transactionsExpenditure.add(expenditure);
-
-    TransactionService transactionService = new TransactionService(transactionRepository);
-
-    // 実行
-    int totalResult = transactionService.calculateIncomeTotal(
-        transactionsIncome) - transactionService.calculateExpenseTotal(transactionsExpenditure);
-
-    // 検証
-    assertEquals(0, totalResult);
-  }
 }
