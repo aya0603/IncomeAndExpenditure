@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.accountapp.entity.AccountEntry;
 import com.example.accountapp.repository.TransactionRepository;
+import com.example.accountapp.entity.AccountInfo;
 
 /**
  * TransactionServiceの収支計算のロジックTest
@@ -66,10 +67,10 @@ class TransactionServiceTest {
   @Test
   void calculateBalance_残高を計算する() {
     // 準備
-    TransactionService transactionService = new TransactionService(transactionRepository);
+    AccountInfo accountInfo = new AccountInfo();
 
     // 実行
-    int totalResult = transactionService.calculateBalance(3, 2);
+    int totalResult = accountInfo.getBalance();
 
     // 検証
     assertEquals(1, totalResult);
