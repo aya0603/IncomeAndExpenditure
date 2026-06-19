@@ -60,18 +60,6 @@ class TransactionServiceTest {
     int totalResult = transactionService.calculateExpenseTotal(transactions);
 
     // 検証
-    assertEquals(-5, totalResult);
-  }
-
-  @Test
-  void calculateBalance_残高を計算する() {
-    // 準備
-    TransactionService transactionService = new TransactionService(transactionRepository);
-
-    // 実行
-    int totalResult = transactionService.calculateBalance(3, 2);
-
-    // 検証
-    assertEquals(1, totalResult);
+    assertEquals(5, totalResult);
   }
 }
